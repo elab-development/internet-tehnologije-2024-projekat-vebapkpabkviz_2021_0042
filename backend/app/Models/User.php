@@ -18,10 +18,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'full-name',
+        'id',
+        'full_name',
         'email',
         'password',
         'username',
+        'team_id',
         'role'
     ];
 
@@ -34,4 +36,13 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+
+    public function team(){
+        return $this->belongsTo(Team::class);
+    }
+
+    public function quizEvents(){
+        return $this->hasMany(QuizEvent::class);
+    }
 }

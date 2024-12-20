@@ -12,4 +12,12 @@ class Team extends Model
     protected $fillable = [
         'name'
     ];
+
+    public function users(){
+        return $this->hasMany(User::class);
+    }
+
+    public function quizEvents(){
+        return $this->belongsToMany(QuizEvent::class)->withPivot('score')->withTimestamps();
+    }
 }
