@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('email_verified_at');
+            $table->foreignId('team_id')->nullable()->references('id')->on('teams')->onDelete('set null');
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('email_verified_at')->nullable();
+            $table->dropForeign('team_id');
         });
     }
 };

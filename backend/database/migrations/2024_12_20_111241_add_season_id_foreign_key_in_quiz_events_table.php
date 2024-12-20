@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('email_verified_at');
+        Schema::table('quiz_events', function (Blueprint $table) {
+            $table->foreignId('season_id')->references('id')->on('seasons')->onDelete('restrict');
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('email_verified_at')->nullable();
+        Schema::table('quiz_events', function (Blueprint $table) {
+            $table->dropForeign('season_id');
         });
     }
 };
