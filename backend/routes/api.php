@@ -20,3 +20,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::resource('/users', UserController::class)->only(['index', 'show']);
+
+Route::resource('/users', UserController::class)->only(['store']);
+
+Route::match(['put', 'patch'],'/users/{user}', [UserController::class, 'update'])->name('users.update');
+
+Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+
