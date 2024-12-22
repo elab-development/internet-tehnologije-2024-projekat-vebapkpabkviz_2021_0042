@@ -6,6 +6,7 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ExportController
 
 /*
 |--------------------------------------------------------------------------
@@ -41,3 +42,5 @@ Route::resource('/teams', TeamController::class)->only(['index', 'show']);
 Route::resource('/teams', TeamController::class)->only(['store']);
 Route::match(['put', 'patch'],'/teams/{team}', [TeamController::class, 'update']);
 Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
+
+Route::get('/export-ical/{season-id}',[ExportController::class, 'exportICalendar'])->name('export-ical');
