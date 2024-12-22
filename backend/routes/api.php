@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\QuizEventTeamController;
+use App\Http\Controllers\TeamUserController;
 
 
 /*
@@ -51,3 +52,5 @@ Route::get('/scores/seasons/{seasonId}', [QuizEventTeamController::class, 'score
 Route::get('/scores/seasons/{seasonId}/teams/{teamId}', [QuizEventTeamController::class, 'scoresInASeasonByATeam'])->name('scores.seasons.teams.show');
 Route::post('/scores', [QuizEventTeamController::class, 'store'])->name('scores.store');
 Route::put('scores/teams/{teamId}/quiz-events/{quizEventId}', [QuizEventTeamController::class, 'update']);
+
+Route::resource('/teams.users', TeamUserController::class)->only(['index']);
