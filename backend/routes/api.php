@@ -6,7 +6,9 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ExportController
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\QuizEventTeamController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -44,3 +46,8 @@ Route::match(['put', 'patch'],'/teams/{team}', [TeamController::class, 'update']
 Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
 
 Route::get('/export-ical/{season-id}',[ExportController::class, 'exportICalendar'])->name('export-ical');
+
+Route::get('/scores/seasons/{seasonId}', [QuizEventTeamController::class, 'scoresInASeason'])->name('scores.seasons.show');
+Route::get('/scores/seasons/{seasonId}/teams/{teamId}', [QuizEventTeamController::class, 'scoresInASeasonByATeam'])->name('scores.seasons.teams.show');
+Route::post('/scores', [QuizEventTeamController::class, 'store'])->name('scores.store');
+Route::put('scores/teams/{teamId}/quiz-events/{quizEventId}', [QuizEventTeamController::class, 'update']);
