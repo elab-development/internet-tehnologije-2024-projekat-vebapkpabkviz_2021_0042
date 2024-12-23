@@ -10,6 +10,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\QuizEventTeamController;
 use App\Http\Controllers\TeamUserController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\API\AuthController;
 
 
 /*
@@ -60,3 +61,12 @@ Route::get('/search/users', [SearchController::class, 'searchUsers'])->name('sea
 Route::get('/search/teams', [SearchController::class, 'searchTeams'])->name('search.teams');
 Route::get('/search/quiz-events', [SearchController::class, 'searchQuizEvents'])->name('search.quiz-events');
 Route::get('/search/seasons', [SearchController::class, 'searchSeasons'])->name('search.seasons');
+
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('/profile', function(Request $request) {
+        return auth()->user();
+    });
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
