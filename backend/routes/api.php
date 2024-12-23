@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\QuizEventTeamController;
 use App\Http\Controllers\TeamUserController;
+use App\Http\Controllers\SearchController;
 
 
 /*
@@ -54,3 +55,8 @@ Route::post('/scores', [QuizEventTeamController::class, 'store'])->name('scores.
 Route::put('scores/teams/{teamId}/quiz-events/{quizEventId}', [QuizEventTeamController::class, 'update']);
 
 Route::resource('/teams.users', TeamUserController::class)->only(['index']);
+
+Route::get('/search/users', [SearchController::class, 'searchUsers'])->name('search.users');
+Route::get('/search/teams', [SearchController::class, 'searchTeams'])->name('search.teams');
+Route::get('/search/quiz-events', [SearchController::class, 'searchQuizEvents'])->name('search.quiz-events');
+Route::get('/search/seasons', [SearchController::class, 'searchSeasons'])->name('search.seasons');
