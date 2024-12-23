@@ -11,6 +11,7 @@ use App\Http\Controllers\QuizEventTeamController;
 use App\Http\Controllers\TeamUserController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\WebServiceController;
 
 
 /*
@@ -70,3 +71,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+Route::get('/random-question', [WebServiceController::class, 'randomQuestion'])->name('random-question');
