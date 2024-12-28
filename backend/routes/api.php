@@ -73,3 +73,4 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 });
 
 Route::get('/random-question', [WebServiceController::class, 'randomQuestion'])->name('random-question');
+Route::post('/register/teams', [TeamController::class, 'registerTeam'])->name('register.teams');

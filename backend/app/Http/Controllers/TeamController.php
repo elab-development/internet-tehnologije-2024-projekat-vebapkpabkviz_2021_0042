@@ -7,6 +7,7 @@ use App\Models\Team;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\User;
 
 class TeamController extends Controller
 {
@@ -145,5 +146,24 @@ class TeamController extends Controller
         }
 
         return response()->json(['message' => 'Team deleted'], 204);
+    }
+    public function registerTeam(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+        ]);
+        if($validator->fails()){
+            return response()->json($validator->errors());
+        }
+        try {
+            $team = Team::create($request->only('name'));
+            $userId = auth('sanctum')->user()->id;
+            $user = User::find($userId);
+            $user->team_id = $team->id;
+            $user->save();
+        } 
+        catch (QueryException $ex) {
+            return response()->json(['message' => $ex->getMessage()], 500);
+        }
+        return response()->json(['data' => new TeamResource($team)], 201);
     }
 }
