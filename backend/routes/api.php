@@ -36,7 +36,7 @@ Route::get('/search/teams', [SearchController::class, 'searchTeams'])->name('sea
 Route::get('/search/quiz-events', [SearchController::class, 'searchQuizEvents'])->name('search.quiz-events');
 Route::get('/search/seasons', [SearchController::class, 'searchSeasons'])->name('search.seasons');
 
-Route::get('/export-ical/{season-id}',[ExportController::class, 'exportICalendar'])->name('export-ical');
+Route::get('/export-ical/{seasonId}',[ExportController::class, 'exportICalendar'])->name('export-ical');
 
 Route::get('/scores/seasons/{seasonId}', [QuizEventTeamController::class, 'scoresInASeason'])->name('scores.seasons.show');
 Route::get('/scores/seasons/{seasonId}/teams/{teamId}', [QuizEventTeamController::class, 'scoresInASeasonByATeam'])->name('scores.seasons.teams.show');

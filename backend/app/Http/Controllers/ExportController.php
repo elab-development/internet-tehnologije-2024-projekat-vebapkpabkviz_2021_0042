@@ -14,7 +14,7 @@ class ExportController extends Controller
 {
     public function exportICalendar(Request $request)
     {
-        $seasonId = $request->season_id;
+        $seasonId = $request->seasonId;
 
         // Fetch quiz events based on season_id
         $quizEvents = QuizEvent::whereHas('season', function ($query) use ($seasonId) {
