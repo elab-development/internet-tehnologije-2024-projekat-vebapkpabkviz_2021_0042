@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
  import { RegisterPage } from './components/RegisterPage';
  import { LoginPage } from './components/LoginPage';
  import { QuizEvents } from './components/QuizEvents';
+ import Footer from './components/Footer';
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
          <Route path="/events" element={<QuizEvents />} />
         
        </Routes>
+       <Footer/>
      </BrowserRouter>
   );
 }
