@@ -4,14 +4,36 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import Scoreboard from './components/Scoreboard';
 import HomePage from './components/HomePage';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+ import { RegisterPage } from './components/RegisterPage';
+ import { LoginPage } from './components/LoginPage';
+ import { QuizEvents } from './components/QuizEvents';
+
 
 function App() {
   return (
-    <div className="App">
-     <p className='bg-red-800'>Caocao</p>
-    
-     <Scoreboard></Scoreboard>
-    </div>
+    <BrowserRouter className="App">
+       <Routes>
+        
+         <Route path="/home" element={<HomePage />} />
+         <Route
+           path="/login"
+           element={
+             <LoginPage
+              
+             />
+           }
+         />
+         <Route
+           path="/register"
+           element={<RegisterPage/>}
+         />
+        
+         <Route path="/scoreboard" element={<Scoreboard />} />
+         <Route path="/events" element={<QuizEvents />} />
+        
+       </Routes>
+     </BrowserRouter>
   );
 }
 
