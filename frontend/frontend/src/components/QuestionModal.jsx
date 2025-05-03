@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { IoMdClose } from "react-icons/io";
+import ClipLoader from "react-spinners/ClipLoader";
+
 
 const shuffleArray = (array) => {
   const shuffledArray = [...array];
@@ -123,7 +125,10 @@ const QuestionModal = ({ closeModal }) => {
             )}
           </>
         ) : (
-          <p>Loading question...</p>
+          <div className="flex justify-center items-center min-h-[200px]">
+  <ClipLoader color="#1c3144" size={50} />
+</div>
+
         )}
       </div>
     </div>
