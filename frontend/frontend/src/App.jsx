@@ -10,6 +10,7 @@ import HomePage from "./components/HomePage";
 import Footer from "./components/Footer";
 import { useState } from "react";
 import QuestionModal from "./components/QuestionModal";
+import Navbar from "./components/NavBar";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,8 +23,15 @@ function App() {
     setIsModalOpen(false);
   };
 
+   const handleStorageLogout = () => {
+    window.sessionStorage.setItem("auth_token", null);
+    window.sessionStorage.setItem("role", null);
+    window.sessionStorage.setItem("userId", null);
+  };
+
   return (
     <BrowserRouter className="App">
+      <Navbar handleStorageLogout={handleStorageLogout} />
       <Routes>
         <Route
           path="/"
