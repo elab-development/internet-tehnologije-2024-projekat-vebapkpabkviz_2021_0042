@@ -1,0 +1,9 @@
+.rbc-toolbar {
+    gap: 10px;
+  }
+  
+  @media screen and (max-width: 1500px) {
+    .rbc-toolbar {
+      flex-direction: column;
+    }
+  }
