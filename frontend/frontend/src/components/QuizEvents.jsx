@@ -125,11 +125,17 @@ const QuizEvents = () => {
   };
 
   const handleDateTimeInputChange = (e) => {
-    const date = new Date(e.target.value);
-    const formattedDateTime = date.toISOString().replace("T", " ").slice(0, 19);
-    setQuizEventData({
+const selectedDate = new Date(e.target.value);
+const offset = selectedDate.getTimezoneOffset(); // Get timezone offset in minutesAdd commentMore actions
+const adjustedDate = new Date(selectedDate.getTime() - offset * 60 * 1000); // Adjust for timezone
+
+const formattedDateTime = adjustedDate
+  .toISOString()
+  .slice(0, 19)
+  .replace("T", " ");
+  setQuizEventData({
       ...quizEventData,
-      start_date_time:formattedDateTime,
+      start_date_time: formattedDateTime,
     });
   };
 
