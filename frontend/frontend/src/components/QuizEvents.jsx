@@ -65,6 +65,10 @@ const QuizEvents = () => {
     setSelectedEvent(null);
   };
 
+  const handleEventDelete = (eventId) => {
+    setEvents(events.filter((event) => event.id !== eventId));
+  };
+
   const [quizEventData, setQuizEventData] = useState({
     name: "",
     start_date_time: "",
@@ -175,7 +179,7 @@ const formattedDateTime = adjustedDate
             onSelectEvent={handleSelectEvent}
           />
           {selectedEvent && (
-            <QuizEventModal event={selectedEvent} closeModal={closeModal} />
+            <QuizEventModal event={selectedEvent} closeModal={closeModal} onDelete={handleEventDelete} />
           )}
         </div>
       </div>
