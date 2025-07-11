@@ -84,6 +84,20 @@ const QuizEvents = () => {
     });
   };
 
+  const [seasonData, setSeasonData] = useState({
+    name: "",
+    start_date: "",
+    end_date: "",
+  });
+
+  const handleInputChangeSeason = (e) => {
+    const { name, value } = e.target;
+    setSeasonData({
+      ...seasonData,
+      [name]: value,
+    });
+  };
+
   const handleExportICal = (e) => {
     console.log(selectedSeasonExport);
     axios
@@ -129,15 +143,15 @@ const QuizEvents = () => {
   };
 
   const handleDateTimeInputChange = (e) => {
-const selectedDate = new Date(e.target.value);
-const offset = selectedDate.getTimezoneOffset(); // Get timezone offset in minutesAdd commentMore actions
-const adjustedDate = new Date(selectedDate.getTime() - offset * 60 * 1000); // Adjust for timezone
+    const selectedDate = new Date(e.target.value);
+    const offset = selectedDate.getTimezoneOffset(); // Get timezone offset in minutes
+    const adjustedDate = new Date(selectedDate.getTime() - offset * 60 * 1000); // Adjust for timezone
 
-const formattedDateTime = adjustedDate
-  .toISOString()
-  .slice(0, 19)
-  .replace("T", " ");
-  setQuizEventData({
+    const formattedDateTime = adjustedDate
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
+    setQuizEventData({
       ...quizEventData,
       start_date_time: formattedDateTime,
     });
@@ -166,6 +180,29 @@ const formattedDateTime = adjustedDate
       });
   };
 
+  const handleSubmitSeason = (e) => {
+    e.preventDefault();
+
+    console.log("Submitted data:", seasonData);
+    let config = {
+      data: seasonData,
+      method: "post",
+      url: "http://127.0.0.1:8000/api/seasons",
+      headers: {
+        Authorization: "Bearer " + window.sessionStorage.getItem("auth_token"),
+      },
+    };
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+        fetchSeasons();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div className="min-h-[84vh] xl:px-60 2xl:px-80 p-6 bg-slate-300 flex flex-col gap-6">
       <div>
@@ -179,7 +216,11 @@ const formattedDateTime = adjustedDate
             onSelectEvent={handleSelectEvent}
           />
           {selectedEvent && (
-            <QuizEventModal event={selectedEvent} closeModal={closeModal} onDelete={handleEventDelete} />
+            <QuizEventModal
+              event={selectedEvent}
+              closeModal={closeModal}
+              onDelete={handleEventDelete}
+            />
           )}
         </div>
       </div>
@@ -199,44 +240,84 @@ const formattedDateTime = adjustedDate
         </div>
       </div>
       {window.sessionStorage.getItem("role") === "moderator" && (
-        <div>
-          <h2 className="text-4xl font-bold mb-3">Add new event</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="flex flex-col lg:gap-3 lg:flex-row justify-between">
-              <div className="basis-1/3">
-                <InputField
-                  label="Name"
-                  type="text"
-                  name="name"
-                  value={quizEventData.name}
-                  onChange={handleInputChange}
-                />
+        <>
+          <div>
+            <h2 className="text-4xl font-bold mb-3">Add new season</h2>
+            <form onSubmit={handleSubmitSeason}>
+              <div className="flex flex-col lg:gap-3 lg:flex-row justify-between">
+                <div className="basis-1/3">
+                  <InputField
+                    label="Name"
+                    type="text"
+                    name="name"
+                    value={seasonData.name}
+                    onChange={handleInputChangeSeason}
+                  />
+                </div>
+                <div className="basis-1/3">
+                  <InputField
+                    label="Start date"
+                    type="date"
+                    name="start_date"
+                    value={seasonData.start_date_time}
+                    onChange={handleInputChangeSeason}
+                  />
+                </div>
+                <div className="basis-1/3">
+                  <InputField
+                    label="End date"
+                    type="date"
+                    name="end_date"
+                    value={seasonData.end_date_time}
+                    onChange={handleInputChangeSeason}
+                  />
+                </div>
               </div>
-              <div className="basis-1/3">
-                <InputField
-                  label="Start date and time"
-                  type="datetime-local"
-                  name="start_date_time"
-                  value={quizEventData.start_date_time}
-                  onChange={handleDateTimeInputChange}
-                />
-              </div>
-              <div className="basis-1/3">
-                <label className="block text-sm font-medium text-gray-700">
-                  Season
-                </label>
-                <DropDown
-                  options={seasons.data} // Pass seasons data as options
-                  handleSelectChange={handleSelectChange} // Handle change accordingly
-                />
-              </div>
-            </div>
 
-            <div className="lg:mt-0 mt-6">
-              <Button type="submit" text="Register" />
-            </div>
-          </form>
-        </div>
+              <div className="lg:mt-0 mt-6">
+                <Button type="submit" text="Add" />
+              </div>
+            </form>
+          </div>
+          <div>
+            <h2 className="text-4xl font-bold mb-3">Add new event</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="flex flex-col lg:gap-3 lg:flex-row justify-between">
+                <div className="basis-1/3">
+                  <InputField
+                    label="Name"
+                    type="text"
+                    name="name"
+                    value={quizEventData.name}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="basis-1/3">
+                  <InputField
+                    label="Start date and time"
+                    type="datetime-local"
+                    name="start_date_time"
+                    value={quizEventData.start_date_time}
+                    onChange={handleDateTimeInputChange}
+                  />
+                </div>
+                <div className="basis-1/3">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Season
+                  </label>
+                  <DropDown
+                    options={seasons.data} // Pass seasons data as options
+                    handleSelectChange={handleSelectChange} // Handle change accordingly
+                  />
+                </div>
+              </div>
+
+              <div className="lg:mt-0 mt-6">
+                <Button type="submit" text="Register" />
+              </div>
+            </form>
+          </div>
+        </>
       )}
     </div>
   );

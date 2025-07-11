@@ -66,9 +66,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::match(['put', 'patch'],'/teams/{team}', [TeamController::class, 'update'])->middleware('checkRole:admin');
     Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy')->middleware('checkRole:admin');
 
-    Route::resource('/seasons', SeasonController::class)->only(['store'])->middleware('checkRole:admin');
-    Route::match(['put', 'patch'],'/seasons/{season}', [SeasonController::class, 'update'])->middleware('checkRole:admin');
-    Route::delete('/seasons/{season}', [SeasonController::class, 'destroy'])->middleware('checkRole:admin');
+    Route::resource('/seasons', SeasonController::class)->only(['store'])->middleware('checkRole:admin,moderator');
+    Route::match(['put', 'patch'],'/seasons/{season}', [SeasonController::class, 'update'])->middleware('checkRole:admin,moderator');
+    Route::delete('/seasons/{season}', [SeasonController::class, 'destroy'])->middleware('checkRole:admin,moderator');
 
     Route::resource('/quiz-events', QuizEventController::class)->only(['store'])->middleware('checkRole:admin,moderator');
     Route::match(['put', 'patch'],'/quiz-events/{quizEvent}', [QuizEventController::class, 'update'])->name('quit-events.update')->middleware('checkRole:admin,moderator');
@@ -80,4 +80,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/register/teams', [TeamController::class, 'registerTeam'])->name('register.teams')->middleware('checkRole:contestant');
     Route::resource('/teams.users', TeamUserController::class)->only(['index']);
 });
+
+
+
+// ovaj commit srediti 72e7f6f
 

@@ -47,7 +47,7 @@ class SeasonController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
+            'name' => 'required|string|unique:seasons',
             'start_date' => 'required|date_format:Y-m-d',
             'end_date' => 'required|date_format:Y-m-d',
         ]);
@@ -116,7 +116,7 @@ class SeasonController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'string',
+            'name' => 'string|unique:seasons',
             'start_date' => 'date_format:Y-m-d',
             'end_date' => 'date_format:Y-m-d',
         ]);
