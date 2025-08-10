@@ -10,6 +10,7 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamUserController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WebServiceController;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,7 +54,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/profile', function(Request $request) {
-        return auth()->user();
+        return response()->json(['data' =>  new UserResource(auth()->user())]);
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -80,8 +81,3 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/register/teams', [TeamController::class, 'registerTeam'])->name('register.teams')->middleware('checkRole:contestant');
     Route::resource('/teams.users', TeamUserController::class)->only(['index']);
 });
-
-
-
-// ovaj commit srediti 72e7f6f
-

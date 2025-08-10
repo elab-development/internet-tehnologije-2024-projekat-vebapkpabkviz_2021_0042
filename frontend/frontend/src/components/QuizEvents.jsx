@@ -313,7 +313,7 @@ const QuizEvents = () => {
               </div>
 
               <div className="lg:mt-0 mt-6">
-                <Button type="submit" text="Register" />
+                <Button type="submit" text="Add" />
               </div>
             </form>
           </div>

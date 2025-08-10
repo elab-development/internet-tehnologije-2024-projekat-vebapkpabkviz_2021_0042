@@ -80,6 +80,15 @@ const Navbar = ({ handleStorageLogout }) => {
               </Link>
             </>
           )}
+          {window.sessionStorage.getItem("role") === "contestant" &&
+            window.sessionStorage.getItem("auth_token") != null && (
+              <Link
+                to="/myteam"
+                className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-200 mr-4"
+              >
+                My Team
+              </Link>
+            )}
           <Link
             to="/scoreboard"
             className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-200 mr-4"
