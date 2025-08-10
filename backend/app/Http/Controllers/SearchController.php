@@ -58,7 +58,7 @@ class SearchController extends Controller
         if($quizEvents->isEmpty()){
             return response()->json(['message' => 'Quiz events not found'], 404);
         }
-        return response()->json(['current_page' => $quizEvents->currentPage(), 'last_page' => $quizEvents->lastPage(), 'quiz events' => QuizEventResource::collection($quizEvents)], 200);
+        return response()->json(['current_page' => $quizEvents->currentPage(), 'last_page' => $quizEvents->lastPage(), 'quiz_events' => QuizEventResource::collection($quizEvents)], 200);
     }
 
     public function searchTeams(Request $request)
@@ -110,6 +110,6 @@ class SearchController extends Controller
         if($users->isEmpty()){
             return response()->json(['message' => 'Users not found'], 404);
         }
-        return response()->json(['current_page' => $users->currentPage(), 'last_page' => $users->lastPage(), 'quiz events' => UserResource::collection($users)], 200);
+        return response()->json(['current_page' => $users->currentPage(), 'last_page' => $users->lastPage(), 'users' => UserResource::collection($users)], 200);
     }
 }

@@ -49,6 +49,8 @@ Route::get('/search/seasons', [SearchController::class, 'searchSeasons'])->name(
 
 Route::get('/random-question', [WebServiceController::class, 'randomQuestion'])->name('random-question');
 
+Route::get('/scores/quiz-events/{quizEventId}/teams/{teamId}', [QuizEventTeamController::class, 'show'])->name('scores.quiz-events.teams.show');
+
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 

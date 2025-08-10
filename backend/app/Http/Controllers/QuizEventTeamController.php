@@ -11,6 +11,33 @@ use Illuminate\Support\Facades\Validator;
 
 class QuizEventTeamController extends Controller
 {
+
+    public function show($quizEventId, $teamId){
+        $team = Team::find($teamId);
+        if (!$team) {
+            return response()->json(['error' => 'Team not found'], 404);
+        }
+
+        $quizEvent = QuizEvent::find($quizEventId);
+        if (!$quizEvent) {
+            return response()->json(['error' => 'Season not found'], 404);
+        }
+
+        $teamName = $team->name;
+        $seasonName = $quizEvent->name;
+
+        $score = $team->quizEvents()
+            ->where('id', $quizEventId)
+            ->withPivot('score')
+            ->get();
+
+        return response()->json([
+            'quiz_event_name' => $seasonName,
+            'team_name' => $teamName,
+            'score' => $score,
+        ], 200);
+    }
+
     public function scoresInASeason($id){
 
         $season = Season::find($id);

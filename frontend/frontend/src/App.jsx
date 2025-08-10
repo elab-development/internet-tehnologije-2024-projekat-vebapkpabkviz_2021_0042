@@ -10,6 +10,7 @@ import { useState } from "react";
 import QuestionModal from "./components/QuestionModal";
 import Navbar from "./components/NavBar";
 import MyTeamPage from "./components/MyTeamPage";
+import ManagePage from "./components/ManagePage";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,6 +43,7 @@ function App() {
         <Route path="/myteam" element={<MyTeamPage />} />
         <Route path="/scoreboard" element={<Scoreboard />} />
         <Route path="/events" element={<QuizEvents />} />
+        <Route path="/manage" element={<ManagePage />} />
       </Routes>
       <Footer openModal={openModal} />
       {isModalOpen && <QuestionModal closeModal={closeModal} />}
