@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { IoMdClose } from "react-icons/io";
-import ClipLoader from "react-spinners/ClipLoader";
-
 
 const shuffleArray = (array) => {
   const shuffledArray = [...array];
@@ -70,8 +68,8 @@ const QuestionModal = ({ closeModal }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="bg-slate-300 border rounded-md overflow-hidden shadow-md max-w-md p-6">
-        <div className="flex justify-between">
+      <div className="bg-slate-300 border rounded-md overflow-hidden shadow-md max-w-xl flex flex-col">
+        <div className="flex justify-between items-center px-6 py-3 bg-slate-400">
           <h2 className="text-lg font-bold">Question</h2>
           <IoMdClose
             onClick={closeModal}
@@ -81,55 +79,54 @@ const QuestionModal = ({ closeModal }) => {
             onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
           />
         </div>
-        {questionData ? (
-          <>
-            <p
-              className="mt-3"
-              dangerouslySetInnerHTML={{ __html: questionData.Question }}
-            />
-            <ul className="mt-3">
-              {options.map((answer, index) => (
-                <li
-                  key={index}
-                  className={`cursor-pointer ${
-                    selectedAnswer === answer ? "font-bold" : ""
-                  }`}
-                  onClick={() => handleAnswerSelection(answer)}
-                >
-                  {answer}
-                </li>
-              ))}
-            </ul>
-            <div className="flex flex-row gap-3">
-              <button
-                onClick={handleSubmit}
-                className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-              >
-                Submit
-              </button>
-              <button
-                onClick={resetModal}
-                className="mt-4 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-              >
-                Next Question
-              </button>
-            </div>
-            {isCorrect !== null && (
+        <div className="p-6 px-6 py-3 flex flex-col gap-3">
+          {questionData ? (
+            <>
               <p
-                className={`mt-3 ${
-                  isCorrect ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {isCorrect ? "Correct!" : "Incorrect!"}
-              </p>
-            )}
-          </>
-        ) : (
-          <div className="flex justify-center items-center min-h-[200px]">
-  <ClipLoader color="#1c3144" size={50} />
-</div>
-
-        )}
+                className="mt-3"
+                dangerouslySetInnerHTML={{ __html: questionData.Question }}
+              />
+              <ul className="mt-3">
+                {options.map((answer, index) => (
+                  <li
+                    key={index}
+                    className={`cursor-pointer ${
+                      selectedAnswer === answer ? "font-bold" : ""
+                    }`}
+                    onClick={() => handleAnswerSelection(answer)}
+                  >
+                    {answer}
+                  </li>
+                ))}
+              </ul>
+              <div className="flex flex-row gap-3">
+                <button
+                  onClick={handleSubmit}
+                  className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                >
+                  Submit
+                </button>
+                <button
+                  onClick={resetModal}
+                  className="mt-4 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+                >
+                  Next Question
+                </button>
+              </div>
+              {isCorrect !== null && (
+                <p
+                  className={`mt-3 ${
+                    isCorrect ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {isCorrect ? "Correct!" : "Incorrect!"}
+                </p>
+              )}
+            </>
+          ) : (
+            <p>Loading question...</p>
+          )}
+        </div>
       </div>
     </div>
   );
