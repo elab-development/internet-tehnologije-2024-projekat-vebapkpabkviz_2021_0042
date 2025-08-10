@@ -77,10 +77,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::match(['put', 'patch'],'/quiz-events/{quizEvent}', [QuizEventController::class, 'update'])->name('quit-events.update')->middleware('checkRole:admin,moderator');
     Route::delete('/quiz-events/{quizEvent}', [QuizEventController::class, 'destroy'])->name('quit-events.destroy')->middleware('checkRole:admin,moderator');
 
-    Route::post('/scores', [QuizEventTeamController::class, 'store'])->name('scores.store')->middleware('checkRole:admin')->middleware('checkRole:admin,moderator');
+    Route::post('/scores', [QuizEventTeamController::class, 'store'])->name('scores.store')->middleware('checkRole:admin,moderator');
     Route::put('scores/teams/{teamId}/quiz-events/{quizEventId}', [QuizEventTeamController::class, 'update'])->middleware('checkRole:admin,moderator');
 
     Route::post('/register/teams', [TeamController::class, 'registerTeam'])->name('register.teams')->middleware('checkRole:contestant');
     Route::put('/join/teams/{team}', [TeamController::class, 'joinTeam'])->name('join.teams')->middleware('checkRole:contestant');
     Route::resource('/teams.users', TeamUserController::class)->only(['index']);
 });
+

@@ -21,6 +21,7 @@ const ManagePage = () => {
     score: "",
     quiz_event_id: "",
   });
+  const [score, setScore] = useState(null);
 
   const handleEventRowClick = async (id) => {
     if (id !== selectedEventRow) {
@@ -31,7 +32,7 @@ const ManagePage = () => {
             `http://127.0.0.1:8000/api/scores/quiz-events/${id}/teams/${selectedTeamRow}`
           );
           console.log("Score:", response.data);
-
+          setScore(response.data.score);
           setScoreData((prevScoreData) => ({
             ...prevScoreData,
             quiz_event_id: id,
@@ -67,7 +68,7 @@ const ManagePage = () => {
             `http://127.0.0.1:8000/api/scores/quiz-events/${selectedEventRow}/teams/${id}`
           );
           console.log("Score:", response.data);
-
+          setScore(response.data.score);
           setScoreData((prevScoreData) => ({
             ...prevScoreData,
             team_id: id,
@@ -162,6 +163,53 @@ const ManagePage = () => {
     fetchQuizEvents(1);
     fetchTeams(1);
   }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setScoreData({
+      ...scoreData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(scoreData);
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/scores",
+        scoreData,
+        {
+          headers: {
+            Authorization:
+              "Bearer " + window.sessionStorage.getItem("auth_token"),
+          },
+        }
+      );
+      console.log(response);
+      console.log(JSON.stringify(response.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUpdateScore = async () => {
+    try {
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/scores/teams/${selectedTeamRow}/quiz-events/${selectedEventRow}`,
+        scoreData,
+        {
+          headers: {
+            Authorization:
+              "Bearer " + window.sessionStorage.getItem("auth_token"),
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error joining team:", error);
+    }
+  };
 
   return (
     <div className="min-h-[84vh] xl:px-60 2xl:px-80 p-6 bg-gray-300 flex flex-col gap-6">
@@ -357,18 +405,33 @@ const ManagePage = () => {
       </div>
       <div className="flex flex-col">
         <h2 className="text-4xl font-bold mb-3">Score</h2>
+        <div>
+          <form onSubmit={handleSubmit}>
+            <InputField
+              label=""
+              type="number"
+              name="score"
+              value={scoreData.score}
+              onChange={handleInputChange}
+            />
 
-        {selectedEventRow !== null && selectedTeamRow !== null && (
-          <>
-            <p>TeamID: {scoreData.team_id}</p>
-            <p>QuizEventID:{scoreData.quiz_event_id}</p>
-            {scoreData.score !== "" ? (
-              <p>{scoreData.score}</p>
-            ) : (
-              <p>No points yet</p>
+            {selectedEventRow !== null && selectedTeamRow !== null && score && (
+              <>
+                { Array.isArray(score) && score.length > 0 ? (
+                  <>
+                    <Button
+                      type="button"
+                      onClick={handleUpdateScore}
+                      text="Update score"
+                    />
+                  </>
+                ) : (
+                  <Button type="submit" text="Add score" />
+                )}
+              </>
             )}
-          </>
-        )}
+          </form>
+        </div>
       </div>
     </div>
   );
