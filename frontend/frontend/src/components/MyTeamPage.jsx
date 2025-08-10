@@ -3,6 +3,7 @@ import axios from "axios";
 import InputField from "./InputField";
 import Button from "./Button";
 import DropDown from "./DropDown";
+import LineChart from "./LineChart";
 
 const MyTeamPage = () => {
   const [userData, setUserData] = useState(null);
@@ -13,6 +14,8 @@ const MyTeamPage = () => {
   const [selectedTeamId, setSelectedTeamId] = useState("");
   const [teams, setTeams] = useState([]);
   const [registrationError, setRegistrationError] = useState(null);
+  const [seasons, setSeasons] = useState();
+  const [selectedSeason, setSelectedSeason] = useState();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -50,6 +53,17 @@ const MyTeamPage = () => {
       fetchTeams();
     }
   }, [userData]);
+
+  useEffect(() => {
+    if (!seasons) {
+      axios.get("http://localhost:8000/api/seasons").then((response) => {
+        setSeasons(response.data);
+        const initialSelectedSeason = response.data?.[0]?.id || "1";
+        setSelectedSeason(initialSelectedSeason);
+      });
+    }
+  }, [seasons]);
+
 
   const fetchTeamContestants = async (teamId) => {
     try {
@@ -133,6 +147,11 @@ const MyTeamPage = () => {
 
   const handleSelectChange = (e) => {
     setSelectedTeamId(e.target.value);
+  };
+
+  const handleSeasonSelectChange = (event) => {
+    const selectedId = event.target.value;
+    setSelectedSeason(selectedId);
   };
 
   return (
@@ -292,6 +311,24 @@ const MyTeamPage = () => {
           <span className="mb-4"></span>
           <Button onClick={handleJoinTeam} text="Join Team" />
         </div>
+      </div>
+      <div className="flex flex-col">
+        <h2 className="text-4xl font-bold mb-3">Scores for a season</h2>
+        {userData?.data?.team ? (
+          <>
+            <DropDown
+              options={seasons?.data}
+              handleSelectChange={handleSeasonSelectChange}
+              selectedOption={selectedSeason}
+            ></DropDown>
+            <LineChart
+              teamId={userData.data.team.id}
+              seasonId={selectedSeason}
+            />
+          </>
+        ) : (
+          <p className="text-lg">No team assigned yet.</p>
+        )}
       </div>
     </div>
   );
