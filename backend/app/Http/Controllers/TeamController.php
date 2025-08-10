@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\TeamResource;
+use App\Http\Resources\UserResource;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
 
 class TeamController extends Controller
 {
@@ -147,13 +148,17 @@ class TeamController extends Controller
 
         return response()->json(['message' => 'Team deleted'], 204);
     }
+
     public function registerTeam(Request $request) {
+
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
+            'name' => 'required|string|unique:teams',
         ]);
+
         if($validator->fails()){
-            return response()->json($validator->errors());
+            return response()->json($validator->errors(), 404);
         }
+
         try {
             $team = Team::create($request->only('name'));
             $userId = auth('sanctum')->user()->id;
@@ -164,6 +169,25 @@ class TeamController extends Controller
         catch (QueryException $ex) {
             return response()->json(['message' => $ex->getMessage()], 500);
         }
+
         return response()->json(['data' => new TeamResource($team)], 201);
+
+    }
+
+    public function joinTeam($id) {
+
+        try {
+            $userId = auth('sanctum')->user()->id;
+            $user = User::find($userId);
+            $user->team_id = $id;
+            $user->save();
+            $user->save();
+        } 
+        catch (QueryException $ex) {
+            return response()->json(['message' => $ex->getMessage()], 500);
+        }
+
+        return response()->json(['data' => new UserResource($user)], 200);
+
     }
 }

@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import InputField from "./InputField";
+import Button from "./Button";
+import DropDown from "./DropDown";
 
 const MyTeamPage = () => {
   const [userData, setUserData] = useState(null);
   const [teamContestants, setTeamContestants] = useState([]);
+  const [teamData, setTeamData] = useState({
+    name: "",
+  });
+  const [selectedTeamId, setSelectedTeamId] = useState("");
+  const [teams, setTeams] = useState([]);
+  const [registrationError, setRegistrationError] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -20,14 +29,25 @@ const MyTeamPage = () => {
       }
     };
 
+    const fetchTeams = async () => {
+      try {
+        if (userData) {
+          const response = await axios.get("http://127.0.0.1:8000/api/teams");
+          setTeams(response.data);
+          setSelectedTeamId(response.data.data[0].id);
+          if (userData.data && userData.data.team) {
+            fetchTeamContestants(userData.data.team.id);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching teams:", error);
+      }
+    };
+
     if (!userData) {
       fetchUserData();
     } else {
-      if (userData) {
-        if (userData.data && userData.data.team) {
-          fetchTeamContestants(userData.data.team.id);
-        }
-      }
+      fetchTeams();
     }
   }, [userData]);
 
@@ -46,6 +66,73 @@ const MyTeamPage = () => {
     } catch (error) {
       console.error(`Error fetching contestants for team ${teamId}:`, error);
     }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setTeamData({
+      ...teamData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/register/teams",
+        teamData,
+        {
+          headers: {
+            Authorization:
+              "Bearer " + window.sessionStorage.getItem("auth_token"),
+          },
+        }
+      );
+
+      // Update the user data after adding the team
+      const updatedUserData = { ...userData };
+      updatedUserData.data.team = {
+        id: response.data.data.id,
+        name: teamData.name,
+      };
+      setUserData(updatedUserData);
+
+      // Clear the input field after submission
+      setTeamData({ name: "" });
+
+      // Reset any previous registration errors
+      setRegistrationError(null);
+    } catch (error) {
+      console.error("Error registering team:", error);
+
+      if (error.response && error.response.data && error.response.data.name) {
+        setRegistrationError(error.response.data.name);
+      }
+    }
+  };
+
+  const handleJoinTeam = async () => {
+    try {
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/join/teams/${selectedTeamId}`,
+        {},
+        {
+          headers: {
+            Authorization:
+              "Bearer " + window.sessionStorage.getItem("auth_token"),
+          },
+        }
+      );
+      setUserData(response.data);
+    } catch (error) {
+      console.error("Error joining team:", error);
+    }
+  };
+
+  const handleSelectChange = (e) => {
+    setSelectedTeamId(e.target.value);
   };
 
   return (
@@ -174,6 +261,37 @@ const MyTeamPage = () => {
         ) : (
           <p>Loading team data...</p>
         )}
+      </div>
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col basis-1/2">
+          <h2 className="text-4xl font-bold mb-3">Register team</h2>
+          {registrationError && (
+            <p className="text-red-500 mb-3">{registrationError}</p>
+          )}
+          <form onSubmit={handleSubmit} className="flex flex-col">
+            <InputField
+              label="Team name"
+              type="text"
+              name="name"
+              value={teamData.name}
+              onChange={handleInputChange}
+            />
+            <Button type="submit" text="Register" />
+          </form>
+        </div>
+
+        <div className="flex flex-col basis-1/2">
+          <h2 className="text-4xl font-bold mb-3">Join team</h2>
+          <label className="block text-sm font-medium text-gray-700">
+            Team
+          </label>
+          <DropDown
+            options={teams.data}
+            handleSelectChange={handleSelectChange}
+          />
+          <span className="mb-4"></span>
+          <Button onClick={handleJoinTeam} text="Join Team" />
+        </div>
       </div>
     </div>
   );

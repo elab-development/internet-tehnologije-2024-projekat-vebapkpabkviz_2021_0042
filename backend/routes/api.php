@@ -79,5 +79,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('scores/teams/{teamId}/quiz-events/{quizEventId}', [QuizEventTeamController::class, 'update'])->middleware('checkRole:admin,moderator');
 
     Route::post('/register/teams', [TeamController::class, 'registerTeam'])->name('register.teams')->middleware('checkRole:contestant');
+    Route::put('/join/teams/{team}', [TeamController::class, 'joinTeam'])->name('join.teams')->middleware('checkRole:contestant');
     Route::resource('/teams.users', TeamUserController::class)->only(['index']);
 });
