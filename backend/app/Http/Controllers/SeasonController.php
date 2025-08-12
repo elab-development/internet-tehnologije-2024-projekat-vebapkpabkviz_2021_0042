@@ -6,6 +6,7 @@ use App\Http\Resources\SeasonResource;
 use App\Models\Season;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,7 +19,11 @@ class SeasonController extends Controller
      */
     public function index()
     {
-        $seasons = Season::all();
+        $cacheKey = 'seasons';
+
+        $seasons = Cache::remember($cacheKey, 60*60*24, function () {
+            return Season::all();
+        });
 
         if (!$seasons) {
             return response()->json(['message' => 'Seasons not found'], 404);

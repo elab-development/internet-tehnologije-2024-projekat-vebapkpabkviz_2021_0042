@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\QuizEvent;
+use App\Models\Season;
+use App\Observers\QuizEventObserver;
+use App\Observers\SeasonObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        QuizEvent::observe(QuizEventObserver::class);
+        Season::observe(SeasonObserver::class);
     }
 }

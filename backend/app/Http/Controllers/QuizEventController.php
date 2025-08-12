@@ -6,6 +6,7 @@ use App\Http\Resources\QuizEventResource;
 use App\Models\QuizEvent;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class QuizEventController extends Controller
@@ -17,13 +18,17 @@ class QuizEventController extends Controller
      */
     public function index()
     {
-        $quizEvent = QuizEvent::all();
+        $cacheKey = 'quiz_events';
 
-        if (!$quizEvent) {
+        $quizEvents = Cache::remember($cacheKey, 60*60*24, function () {
+            return QuizEvent::all();
+        });
+
+        if (!$quizEvents) {
             return response()->json(['message' => 'Quiz events not found'], 404);
         }
 
-        return response()->json(['data' => QuizEventResource::collection($quizEvent)], 200);
+        return response()->json(['data' => QuizEventResource::collection($quizEvents)], 200);
     }
 
     /**
