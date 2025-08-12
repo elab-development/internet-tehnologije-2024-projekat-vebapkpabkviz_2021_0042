@@ -11,6 +11,7 @@ import QuestionModal from "./components/QuestionModal";
 import Navbar from "./components/NavBar";
 import MyTeamPage from "./components/MyTeamPage";
 import ManagePage from "./components/ManagePage";
+import FlagModal from "./components/FlagModal";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,6 +22,16 @@ function App() {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const [isFlagModalOpen, setIsFlagModalOpen] = useState(false);
+
+  const openFlagModal = () => {
+    setIsFlagModalOpen(true);
+  };
+
+  const closeFlagModal = () => {
+    setIsFlagModalOpen(false);
   };
 
   const handleStorageLogout = () => {
@@ -45,8 +56,9 @@ function App() {
         <Route path="/events" element={<QuizEvents />} />
         <Route path="/manage" element={<ManagePage />} />
       </Routes>
-      <Footer openModal={openModal} />
+      <Footer openModal={openModal} openFlagModal={openFlagModal} />
       {isModalOpen && <QuestionModal closeModal={closeModal} />}
+      {isFlagModalOpen && <FlagModal closeModal={closeFlagModal} />}
     </BrowserRouter>
   );
 }
