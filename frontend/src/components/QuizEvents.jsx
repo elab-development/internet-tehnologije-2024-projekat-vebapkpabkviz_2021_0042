@@ -9,6 +9,9 @@ import InputField from "./InputField";
 import Button from "./Button";
 import DropDown from "./DropDown";
 
+axios.defaults.withCredentials = true;
+axios.defaults.withXSRFToken = true;
+
 const QuizEvents = () => {
   const localizer = momentLocalizer(moment);
   const [events, setEvents] = useState([]);
@@ -19,7 +22,7 @@ const QuizEvents = () => {
 
   const fetchSeasons = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/seasons");
+      const response = await axios.get("http://localhost:8000/api/seasons");
       console.log(response.data);
       setSeasons(response.data);
     } catch (error) {
@@ -29,7 +32,7 @@ const QuizEvents = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/quiz-events");
+      const response = await axios.get("http://localhost:8000/api/quiz-events");
       const formattedEvents = response.data.data.map((event) => {
         const startDateTime = new Date(event.start_date_time);
         const endDateTime = new Date(
@@ -101,7 +104,7 @@ const QuizEvents = () => {
   const handleExportICal = (e) => {
     console.log(selectedSeasonExport);
     axios
-      .get(`http://127.0.0.1:8000/api/export-ical/${selectedSeasonExport}`, {
+      .get(`http://localhost:8000/api/export-ical/${selectedSeasonExport}`, {
         responseType: "blob", // Set the response type to 'blob'
       })
       .then((response) => {
@@ -164,7 +167,7 @@ const QuizEvents = () => {
     let config = {
       data: quizEventData,
       method: "post",
-      url: "http://127.0.0.1:8000/api/quiz-events",
+      url: "http://localhost:8000/api/quiz-events",
       headers: {
         Authorization: "Bearer " + window.sessionStorage.getItem("auth_token"),
       },
@@ -187,7 +190,7 @@ const QuizEvents = () => {
     let config = {
       data: seasonData,
       method: "post",
-      url: "http://127.0.0.1:8000/api/seasons",
+      url: "http://localhost:8000/api/seasons",
       headers: {
         Authorization: "Bearer " + window.sessionStorage.getItem("auth_token"),
       },

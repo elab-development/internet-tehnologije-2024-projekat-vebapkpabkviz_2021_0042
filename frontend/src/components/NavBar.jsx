@@ -6,6 +6,9 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { IoMdClose } from "react-icons/io";
 import useBurgerMenu from "./useBurgerMenu"; // Import the custom hook
 
+axios.defaults.withCredentials = true;
+axios.defaults.withXSRFToken = true;
+
 const Navbar = ({ handleStorageLogout }) => {
   const { isOpen, toggleMenu } = useBurgerMenu(false); // Use the custom hook
   let navigate = useNavigate();
@@ -13,7 +16,7 @@ const Navbar = ({ handleStorageLogout }) => {
   const handleLogout = () => {
     let config = {
       method: "post",
-      url: "http://127.0.0.1:8000/api/logout",
+      url: "http://localhost:8000/api/logout",
       headers: {
         Authorization: "Bearer " + window.sessionStorage.getItem("auth_token"),
       },

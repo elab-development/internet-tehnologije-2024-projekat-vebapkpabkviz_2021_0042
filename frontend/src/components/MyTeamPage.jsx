@@ -5,6 +5,9 @@ import Button from "./Button";
 import DropDown from "./DropDown";
 import LineChart from "./LineChart";
 
+axios.defaults.withCredentials = true;
+axios.defaults.withXSRFToken = true;
+
 const MyTeamPage = () => {
   const [userData, setUserData] = useState(null);
   const [teamContestants, setTeamContestants] = useState([]);
@@ -20,7 +23,7 @@ const MyTeamPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/profile", {
+        const response = await axios.get("http://localhost:8000/api/profile", {
           headers: {
             Authorization:
               "Bearer " + window.sessionStorage.getItem("auth_token"),
@@ -35,7 +38,7 @@ const MyTeamPage = () => {
     const fetchTeams = async () => {
       try {
         if (userData) {
-          const response = await axios.get("http://127.0.0.1:8000/api/teams");
+          const response = await axios.get("http://localhost:8000/api/teams");
           setTeams(response.data);
           setSelectedTeamId(response.data.data[0].id);
           if (userData.data && userData.data.team) {
@@ -68,7 +71,7 @@ const MyTeamPage = () => {
   const fetchTeamContestants = async (teamId) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/teams/${teamId}/users`,
+        `http://localhost:8000/api/teams/${teamId}/users`,
         {
           headers: {
             Authorization:
@@ -95,7 +98,7 @@ const MyTeamPage = () => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/register/teams",
+        "http://localhost:8000/api/register/teams",
         teamData,
         {
           headers: {
@@ -130,7 +133,7 @@ const MyTeamPage = () => {
   const handleJoinTeam = async () => {
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/join/teams/${selectedTeamId}`,
+        `http://localhost:8000/api/join/teams/${selectedTeamId}`,
         {},
         {
           headers: {
@@ -308,7 +311,7 @@ const MyTeamPage = () => {
             options={teams.data}
             handleSelectChange={handleSelectChange}
           />
-          <span className="mb-4"></span>
+          <span className="mb-3"></span>
           <Button onClick={handleJoinTeam} text="Join Team" />
         </div>
       </div>

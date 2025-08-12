@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import InputField from "./InputField";
 import Button from "./Button";
 
+axios.defaults.withCredentials = true;
+axios.defaults.withXSRFToken = true;
+
 const RegisterPage = () => {
   const [userData, setUserData] = useState({
     username: "",
@@ -23,11 +26,11 @@ const RegisterPage = () => {
   };
 
   let navigate = useNavigate();
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    axios
-      .post("http://127.0.0.1:8000/api/register", userData)
+    await axios.get("http://localhost:8000/sanctum/csrf-cookie");
+    await axios
+      .post("http://localhost:8000/api/register", userData)
       .then((response) => {
         console.log(response.data);
         if (response.data.access_token) {

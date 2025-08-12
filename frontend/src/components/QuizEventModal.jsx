@@ -4,13 +4,16 @@ import { IoMdClose } from "react-icons/io";
 import axios from "axios";
 import { MdDeleteForever } from "react-icons/md";
 
+axios.defaults.withCredentials = true;
+axios.defaults.withXSRFToken = true;
+
 const QuizEventModal = ({ event, closeModal, onDelete }) => {
   const formattedStartDate = moment(event.start).format("MMMM Do YYYY, HH:mm");
   const formattedEndDate = moment(event.end).format("MMMM Do YYYY, HH:mm");
 
   const handleDelete = () => {
     axios
-      .delete(`http://127.0.0.1:8000/api/quiz-events/${event.id}`, {
+      .delete(`http://localhost:8000/api/quiz-events/${event.id}`, {
         headers: {
           Authorization:
             "Bearer " + window.sessionStorage.getItem("auth_token"),
@@ -27,7 +30,7 @@ const QuizEventModal = ({ event, closeModal, onDelete }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-slate-300 border rounded-md overflow-hidden shadow-md max-w-xl flex flex-col">
+      <div className="bg-slate-300 border rounded-md overflow-hidden shadow-md max-w-xl flex flex-col">
         <div className="flex justify-between items-center px-6 py-3 bg-slate-400">
           <h2 className="text-lg font-bold">Details</h2>
           <div className="flex items-center">

@@ -3,6 +3,9 @@ import axios from "axios";
 import InputField from "./InputField";
 import Button from "./Button";
 
+axios.defaults.withCredentials = true;
+axios.defaults.withXSRFToken = true;
+
 const ManagePage = () => {
   const [quizEvents, setQuizEvents] = useState([]);
   const [teams, setTeams] = useState([]);
@@ -29,7 +32,7 @@ const ManagePage = () => {
       if (selectedTeamRow) {
         try {
           const response = await axios.get(
-            `http://127.0.0.1:8000/api/scores/quiz-events/${id}/teams/${selectedTeamRow}`
+            `http://localhost:8000/api/scores/quiz-events/${id}/teams/${selectedTeamRow}`
           );
           console.log("Score:", response.data);
           setScore(response.data.score);
@@ -65,7 +68,7 @@ const ManagePage = () => {
       if (selectedEventRow) {
         try {
           const response = await axios.get(
-            `http://127.0.0.1:8000/api/scores/quiz-events/${selectedEventRow}/teams/${id}`
+            `http://localhost:8000/api/scores/quiz-events/${selectedEventRow}/teams/${id}`
           );
           console.log("Score:", response.data);
           setScore(response.data.score);
@@ -104,7 +107,7 @@ const ManagePage = () => {
       if (page) params.page = page;
 
       const response = await axios.get(
-        "http://127.0.0.1:8000/api/search/quiz-events",
+        "http://localhost:8000/api/search/quiz-events",
         {
           params,
         }
@@ -127,7 +130,7 @@ const ManagePage = () => {
       if (page) params.page = page;
 
       const response = await axios.get(
-        "http://127.0.0.1:8000/api/search/teams",
+        "http://localhost:8000/api/search/teams",
         {
           params,
         }
@@ -177,7 +180,7 @@ const ManagePage = () => {
     console.log(scoreData);
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/scores",
+        "http://localhost:8000/api/scores",
         scoreData,
         {
           headers: {
@@ -196,7 +199,7 @@ const ManagePage = () => {
   const handleUpdateScore = async () => {
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/scores/teams/${selectedTeamRow}/quiz-events/${selectedEventRow}`,
+        `http://localhost:8000/api/scores/teams/${selectedTeamRow}/quiz-events/${selectedEventRow}`,
         scoreData,
         {
           headers: {
