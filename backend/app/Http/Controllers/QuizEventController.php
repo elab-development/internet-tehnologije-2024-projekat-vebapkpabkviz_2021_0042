@@ -7,6 +7,7 @@ use App\Models\QuizEvent;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class QuizEventController extends Controller
@@ -55,23 +56,27 @@ class QuizEventController extends Controller
             'user_id' => 'required|integer',
             'season_id' => 'required|integer'
         ]);
-
-        if($validator->fails()){
-            return response()->json($validator->errors());
+    
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
         }
-        
+    
         try {
+            DB::beginTransaction();
+    
             $quizEvent = new QuizEvent();
             $quizEvent->name = $request->name;
             $quizEvent->start_date_time = $request->start_date_time;
             $quizEvent->user_id = $request->user_id;
             $quizEvent->season_id = $request->season_id;
             $quizEvent->save();
-        } 
-         catch (QueryException $ex) {
+    
+            DB::commit();
+        } catch (QueryException $ex) {
+            DB::rollback();
             return response()->json(['message' => $ex->getMessage()], 500);
         }
-
+    
         return response()->json(['data' => new QuizEventResource($quizEvent)], 201);
 
     }
@@ -156,9 +161,13 @@ class QuizEventController extends Controller
         }
 
         try {
+            DB::beginTransaction();
+
             $quizEvent->delete();
-        } 
-        catch (QueryException $ex) {
+
+            DB::commit();
+        } catch (QueryException $ex) {
+            DB::rollback();
             return response()->json(['message' => $ex->getMessage()], 500);
         }
 

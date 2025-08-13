@@ -8,6 +8,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class SeasonController extends Controller
@@ -56,29 +57,33 @@ class SeasonController extends Controller
             'start_date' => 'required|date_format:Y-m-d',
             'end_date' => 'required|date_format:Y-m-d',
         ]);
-
-        if($validator->fails()){
-            return response()->json($validator->errors());
+    
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
         }
-
+    
         $dateS = Date::createFromFormat('Y-m-d', $request->start_date);
         $dateE = Date::createFromFormat('Y-m-d', $request->end_date);
-
+    
         if ($dateS > $dateE) {
-            return response()->json(['message'=>'start_date must be before end_date']);
+            return response()->json(['message' => 'start_date must be before end_date'], 400);
         }
-        
+    
         try {
+            DB::beginTransaction();
+    
             $season = new Season();
             $season->name = $request->name;
             $season->start_date = $request->start_date;
             $season->end_date = $request->end_date;
             $season->save();
-        } 
-         catch (QueryException $ex) {
+    
+            DB::commit();
+        } catch (QueryException $ex) {
+            DB::rollback();
             return response()->json(['message' => $ex->getMessage()], 500);
         }
-
+    
         return response()->json(['data' => new SeasonResource($season)], 201);
 
     }
