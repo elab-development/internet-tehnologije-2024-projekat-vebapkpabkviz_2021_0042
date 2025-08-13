@@ -14,30 +14,43 @@ axios.defaults.withXSRFToken = true;
 
 const QuizEvents = () => {
   const localizer = momentLocalizer(moment);
+
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [selectedSeasonExport, setSelectedSeasonExport] = useState("1");
 
+  const [selectedSeasonExport, setSelectedSeasonExport] = useState("");
   const [seasons, setSeasons] = useState([]);
 
+  const [quizEventData, setQuizEventData] = useState({
+    name: "",
+    start_date_time: "",
+    user_id: Number(window.sessionStorage.getItem("userId")),
+    season_id: "",
+  });
+
+  const [seasonData, setSeasonData] = useState({
+    name: "",
+    start_date: "",
+    end_date: "",
+  });
+
+  // Fetch seasons
   const fetchSeasons = async () => {
     try {
       const response = await axios.get("http://localhost:8000/api/seasons");
-      console.log(response.data);
       setSeasons(response.data);
     } catch (error) {
       console.error("Error fetching seasons:", error);
     }
   };
 
+  // Fetch quiz events
   const fetchData = async () => {
     try {
       const response = await axios.get("http://localhost:8000/api/quiz-events");
       const formattedEvents = response.data.data.map((event) => {
         const startDateTime = new Date(event.start_date_time);
-        const endDateTime = new Date(
-          startDateTime.getTime() + 3 * 60 * 60 * 1000
-        ); // Adding 3 hours
+        const endDateTime = new Date(startDateTime.getTime() + 3 * 60 * 60 * 1000);
         return {
           id: event.id,
           title: event.name,
@@ -51,93 +64,61 @@ const QuizEvents = () => {
     }
   };
 
+  // On mount fetch seasons and events
   useEffect(() => {
     fetchSeasons();
-  }, []);
-
-  useEffect(() => {
     fetchData();
   }, []);
 
-  const handleSelectEvent = (event) => {
-    setSelectedEvent(event);
-    console.log(event);
-  };
+  // When seasons change, set default IDs if empty
+  useEffect(() => {
+    const list = seasons?.data || [];
+    if (list.length) {
+      if (!quizEventData.season_id) {
+        setQuizEventData((prev) => ({ ...prev, season_id: String(list[0].id) }));
+      }
+      if (!selectedSeasonExport) {
+        setSelectedSeasonExport(String(list[0].id));
+      }
+    }
+  }, [seasons]);
 
-  const closeModal = () => {
-    setSelectedEvent(null);
-  };
-
-  const handleEventDelete = (eventId) => {
-    setEvents(events.filter((event) => event.id !== eventId));
-  };
-
-  const [quizEventData, setQuizEventData] = useState({
-    name: "",
-    start_date_time: "",
-    user_id: window.sessionStorage.getItem("userId"),
-    season_id: "",
-  });
+  const handleSelectEvent = (event) => setSelectedEvent(event);
+  const closeModal = () => setSelectedEvent(null);
+  const handleEventDelete = (eventId) => setEvents(events.filter((event) => event.id !== eventId));
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setQuizEventData({
-      ...quizEventData,
-      [name]: value,
-    });
+    setQuizEventData((prev) => ({ ...prev, [name]: value }));
   };
-
-  const [seasonData, setSeasonData] = useState({
-    name: "",
-    start_date: "",
-    end_date: "",
-  });
 
   const handleInputChangeSeason = (e) => {
     const { name, value } = e.target;
-    setSeasonData({
-      ...seasonData,
-      [name]: value,
-    });
+    setSeasonData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleExportICal = (e) => {
-    console.log(selectedSeasonExport);
+  const handleExportICal = () => {
     axios
       .get(`http://localhost:8000/api/export-ical/${selectedSeasonExport}`, {
-        responseType: "blob", // Set the response type to 'blob'
+        responseType: "blob",
       })
       .then((response) => {
-        // Create a Blob object from the response data
         const fileBlob = new Blob([response.data], { type: "text/calendar" });
-
-        // Create a temporary URL to the Blob object
         const fileUrl = window.URL.createObjectURL(fileBlob);
-
-        // Create an anchor element to trigger the download
         const downloadLink = document.createElement("a");
         downloadLink.href = fileUrl;
-        downloadLink.setAttribute("download", "calendar.ics"); // Set the desired file name
-
-        // Append the anchor element to the body and trigger the click event
+        downloadLink.setAttribute("download", "calendar.ics");
         document.body.appendChild(downloadLink);
         downloadLink.click();
-
-        // Clean up: remove the temporary URL and anchor element
         document.body.removeChild(downloadLink);
         window.URL.revokeObjectURL(fileUrl);
       })
-      .catch((error) => {
-        console.error("Error exporting iCal:", error);
-      });
+      .catch((error) => console.error("Error exporting iCal:", error));
   };
 
   const handleSelectChange = (e) => {
     const selectedSeasonId = e.target.value;
-    setQuizEventData({
-      ...quizEventData,
-      season_id: selectedSeasonId,
-    });
+    setQuizEventData((prev) => ({ ...prev, season_id: selectedSeasonId }));
   };
 
   const handleSelectChangeExport = (e) => {
@@ -147,23 +128,17 @@ const QuizEvents = () => {
 
   const handleDateTimeInputChange = (e) => {
     const selectedDate = new Date(e.target.value);
-    const offset = selectedDate.getTimezoneOffset(); // Get timezone offset in minutes
-    const adjustedDate = new Date(selectedDate.getTime() - offset * 60 * 1000); // Adjust for timezone
-
+    const offset = selectedDate.getTimezoneOffset();
+    const adjustedDate = new Date(selectedDate.getTime() - offset * 60 * 1000);
     const formattedDateTime = adjustedDate
       .toISOString()
       .slice(0, 19)
       .replace("T", " ");
-    setQuizEventData({
-      ...quizEventData,
-      start_date_time: formattedDateTime,
-    });
+    setQuizEventData((prev) => ({ ...prev, start_date_time: formattedDateTime }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    console.log("Submitted data:", quizEventData);
     let config = {
       data: quizEventData,
       method: "post",
@@ -174,19 +149,14 @@ const QuizEvents = () => {
     };
     axios
       .request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-        fetchData();
-      })
+      .then(() => fetchData())
       .catch((error) => {
-        console.log(error);
+        console.log("Error:", error.response?.data || error);
       });
   };
 
   const handleSubmitSeason = (e) => {
     e.preventDefault();
-
-    console.log("Submitted data:", seasonData);
     let config = {
       data: seasonData,
       method: "post",
@@ -197,12 +167,9 @@ const QuizEvents = () => {
     };
     axios
       .request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-        fetchSeasons();
-      })
+      .then(() => fetchSeasons())
       .catch((error) => {
-        console.log(error);
+        console.log("Error:", error.response?.data || error);
       });
   };
 
@@ -227,21 +194,20 @@ const QuizEvents = () => {
           )}
         </div>
       </div>
+
       <div className="flex flex-row gap-3 items-center">
         <div className="basis-2/3">
-          <Button
-            type="button"
-            text="Export iCalendar for"
-            onClick={handleExportICal}
-          />
+          <Button type="button" text="Export iCalendar for" onClick={handleExportICal} />
         </div>
         <div className="basis-1/3 mb-1">
           <DropDown
-            options={seasons.data} // Pass seasons data as options
-            handleSelectChange={handleSelectChangeExport} // Handle change accordingly
+            value={selectedSeasonExport}
+            options={seasons.data}
+            handleSelectChange={handleSelectChangeExport}
           />
         </div>
       </div>
+
       {window.sessionStorage.getItem("role") === "moderator" && (
         <>
           <div>
@@ -262,7 +228,7 @@ const QuizEvents = () => {
                     label="Start date"
                     type="date"
                     name="start_date"
-                    value={seasonData.start_date_time}
+                    value={seasonData.start_date}
                     onChange={handleInputChangeSeason}
                   />
                 </div>
@@ -271,17 +237,17 @@ const QuizEvents = () => {
                     label="End date"
                     type="date"
                     name="end_date"
-                    value={seasonData.end_date_time}
+                    value={seasonData.end_date}
                     onChange={handleInputChangeSeason}
                   />
                 </div>
               </div>
-
               <div className="lg:mt-0 mt-6">
                 <Button type="submit" text="Add" />
               </div>
             </form>
           </div>
+
           <div>
             <h2 className="text-4xl font-bold mb-3">Add new event</h2>
             <form onSubmit={handleSubmit}>
@@ -305,16 +271,15 @@ const QuizEvents = () => {
                   />
                 </div>
                 <div className="basis-1/3">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Season
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700">Season</label>
                   <DropDown
-                    options={seasons.data} // Pass seasons data as options
-                    handleSelectChange={handleSelectChange} // Handle change accordingly
+                    name="season_id"
+                    value={quizEventData.season_id}
+                    options={seasons.data}
+                    handleSelectChange={handleSelectChange}
                   />
                 </div>
               </div>
-
               <div className="lg:mt-0 mt-6">
                 <Button type="submit" text="Add" />
               </div>
