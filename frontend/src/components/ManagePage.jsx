@@ -39,6 +39,7 @@ const ManagePage = () => {
           setScoreData((prevScoreData) => ({
             ...prevScoreData,
             quiz_event_id: id,
+            team_id: selectedTeamRow,
           }));
           if (
             Array.isArray(response.data.score) &&
@@ -75,6 +76,7 @@ const ManagePage = () => {
           setScoreData((prevScoreData) => ({
             ...prevScoreData,
             team_id: id,
+            quiz_event_id: selectedEventRow,
           }));
           if (
             Array.isArray(response.data.score) &&
@@ -420,7 +422,7 @@ const ManagePage = () => {
 
             {selectedEventRow !== null && selectedTeamRow !== null && score && (
               <>
-                { Array.isArray(score) && score.length > 0 ? (
+                {Array.isArray(score) && score.length > 0 ? (
                   <>
                     <Button
                       type="button"
