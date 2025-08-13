@@ -62,7 +62,7 @@ const Navbar = ({ handleStorageLogout }) => {
             <>
               <button
                 onClick={handleLogout}
-                className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-200 mr-4"
+                className="block mt-4 lg:inline-block lg:mt-0 text-white bg-sky-700 px-3 py-1 rounded hover:bg-sky-800 mr-4"
               >
                 Logout
               </button>
