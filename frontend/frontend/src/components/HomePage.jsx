@@ -27,9 +27,7 @@ const HomePage = () => {
         <div className="max-w-4xl flex flex-col justify-items-center text-center">
           <h2 className="text-3xl font-bold mb-4">About Us</h2>
           <p className="text-lg">
-          Welcome to New London Pub, where great conversation meets exciting challenges in a vibrant 
-          and fun setting! We specialize in hosting the most captivating and enjoyable pub quiz events,
-           bringing together friends, family, and trivia lovers for unforgettable experiences.
+          Welcome to The King's Arms, where lively conversation blends with thrilling challenges in a warm and friendly atmosphere! We pride ourselves on hosting the most engaging and entertaining pub quiz nights, bringing together friends, family, and trivia enthusiasts for unforgettable moments.
           </p>
         </div>
       </section>

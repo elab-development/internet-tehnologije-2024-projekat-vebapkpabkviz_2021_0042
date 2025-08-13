@@ -36,9 +36,9 @@ const Navbar = ({ handleStorageLogout }) => {
 
   return (
     <nav className="flex items-center justify-between flex-wrap bg-sky-700 p-6 min-h-[10vh]">
-      <div className="flex items-center flex-shrink-0 text-white mr-6">
-        <Link to="/home">
-          <span className="font-semibold text-xl tracking-tight">FE pub</span>
+      <div className="flex items-center flex-shrink-0 mr-6">
+        <Link to="/home" className="text-white font-semibold text-xl tracking-tight">
+          Home
         </Link>
       </div>
       <div className="block lg:hidden">
