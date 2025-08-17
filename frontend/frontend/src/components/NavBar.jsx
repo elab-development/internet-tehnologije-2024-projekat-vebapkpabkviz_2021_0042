@@ -92,15 +92,15 @@ const Navbar = ({ handleStorageLogout }) => {
                 My Team
               </Link>
             )}
-          {window.sessionStorage.getItem("role") === "moderator" &&
-            window.sessionStorage.getItem("auth_token") != null && (
-              <Link
-                to="/manage"
-                className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-200 mr-4"
-              >
-                Manage
-              </Link>
-            )}
+{["moderator", "admin"].includes(window.sessionStorage.getItem("role")) &&
+  window.sessionStorage.getItem("auth_token") != null && (
+    <Link
+      to="/manage"
+      className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-200 mr-4"
+    >
+      Manage
+    </Link>
+)}
           <Link
             to="/scoreboard"
             className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-200 mr-4"

@@ -14,8 +14,10 @@ axios.defaults.withXSRFToken = true;
 
 const QuizEvents = () => {
   const localizer = momentLocalizer(moment);
+  const role = window.sessionStorage.getItem("role");
+  const canManage = ["moderator", "admin"].includes(role);
+  const isAdmin = role === "admin";
 
-  // Calendar (controlled)
   const [calDate, setCalDate] = useState(new Date());
   const [calView, setCalView] = useState("month");
   const handleNavigate = (newDate) => setCalDate(newDate);
@@ -24,7 +26,6 @@ const QuizEvents = () => {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  // VAŽNO: inicijalni shape kao { data: [] } da ne puca mapiranje
   const [seasons, setSeasons] = useState({ data: [] });
   const [selectedSeasonExport, setSelectedSeasonExport] = useState("");
 
@@ -44,7 +45,6 @@ const QuizEvents = () => {
   const fetchSeasons = async () => {
     try {
       const res = await axios.get("http://localhost:8000/api/seasons");
-      // očekujemo { data: [...] }
       setSeasons(res.data ?? { data: [] });
     } catch (err) {
       console.error("Error fetching seasons:", err);
@@ -71,7 +71,6 @@ const QuizEvents = () => {
     fetchData();
   }, []);
 
-  // Set default season_id i export selekciju kada se sezone učitaju
   useEffect(() => {
     const list = seasons?.data || [];
     if (list.length) {
@@ -82,7 +81,6 @@ const QuizEvents = () => {
         setSelectedSeasonExport(String(list[0].id));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seasons]);
 
   const handleSelectEvent = (event) => setSelectedEvent(event);
@@ -118,7 +116,6 @@ const QuizEvents = () => {
     setQuizEventData((prev) => ({ ...prev, start_date_time: formatted }));
   };
 
-  // DODATO: postojala referenca u JSX-u
   const handleExportICal = () => {
     if (!selectedSeasonExport) return;
     axios
@@ -163,7 +160,22 @@ const QuizEvents = () => {
       .catch((error) => console.log("Error:", error.response?.data || error));
   };
 
-  // UX: min/max za datetime prema izabranoj sezoni
+  const handleDeleteSeason = () => {
+    if (!selectedSeasonExport) return;
+    axios
+      .delete(`http://localhost:8000/api/seasons/${selectedSeasonExport}`, {
+        headers: {
+          Authorization: "Bearer " + window.sessionStorage.getItem("auth_token"),
+        },
+      })
+      .then(() => {
+        setSelectedSeasonExport("");
+        setQuizEventData((prev) => ({ ...prev, season_id: "" }));
+        fetchSeasons();
+      })
+      .catch((error) => console.log("Error:", error.response?.data || error));
+  };
+
   const selectedSeason =
     (seasons.data || []).find((s) => String(s.id) === String(quizEventData.season_id)) || null;
 
@@ -210,19 +222,27 @@ const QuizEvents = () => {
       </div>
 
       <div className="flex flex-row gap-3 items-center">
-        <div className="basis-2/3">
+        <div className="basis-2/3 flex gap-3">
           <Button type="button" text="Export iCalendar for" onClick={handleExportICal} />
+          {isAdmin && (
+            <Button
+              type="button"
+              text="Delete selected season"
+              onClick={handleDeleteSeason}
+              disabled={!selectedSeasonExport}
+            />
+          )}
         </div>
         <div className="basis-1/3 mb-1">
           <DropDown
             value={selectedSeasonExport}
-            options={seasons.data || []}   // #safe
+            options={seasons.data || []}
             handleSelectChange={handleSelectChangeExport}
           />
         </div>
       </div>
 
-      {window.sessionStorage.getItem("role") === "moderator" && (
+      {canManage && (
         <>
           <div>
             <h2 className="text-4xl font-bold mb-3">Add new season</h2>
@@ -291,7 +311,7 @@ const QuizEvents = () => {
                   <DropDown
                     name="season_id"
                     value={quizEventData.season_id}
-                    options={seasons.data || []}   // #safe
+                    options={seasons.data || []}
                     handleSelectChange={handleSelectChange}
                   />
                 </div>
