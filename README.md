@@ -10,10 +10,11 @@
 1. Pozicionirati se u folder backend komandom <code>cd backend</code>
 2. Instalirati composer komandom: <code>composer install</code>
 3. Kopirati env dokument komandom: <code>cp .env.example .env</code>
-4. Konfigurisati podatke o bazi u novonastalom .env dokumentu
-5. Pokrenuti migracije komandom: <code>php artisan migrate</code>
-6. Pokrenuti seedere komandom: <code>php artisan db:seed</code>
-7. Pokrenuti aplikaciju komandom: <code>php artisan serve</code>
+4. Generisati ključ aplikacije komandom: <code>php artisan key:generate</code>
+5. Konfigurisati podatke o bazi u novonastalom .env dokumentu
+6. Pokrenuti migracije komandom: <code>php artisan migrate</code>
+7. Pokrenuti seedere komandom: <code>php artisan db:seed</code>
+8. Pokrenuti aplikaciju komandom: <code>php artisan serve</code>
 <hr>
 
 <h2>Pokretanje frontend aplikacije</h2>
